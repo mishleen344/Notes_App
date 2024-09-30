@@ -9,7 +9,7 @@ import 'add_note_form.dart';
 import 'custom_button.dart';
 
 class AddNoteButtonSheet extends StatefulWidget {
- const  AddNoteButtonSheet({super.key});
+  const AddNoteButtonSheet({super.key});
 
   @override
   State<AddNoteButtonSheet> createState() => _AddNoteButtonSheetState();
@@ -19,24 +19,27 @@ class _AddNoteButtonSheetState extends State<AddNoteButtonSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return  Padding(
-      padding: EdgeInsets.only(top: 32, left: 16, right: 16),
-      child: SingleChildScrollView(
-        child: BlocConsumer<AddNoteCubit, AddNoteState>(
-          listener: (context, state) {
-            if(state is AddNoteFailer){
-              print('Faield ${state.errMessage}');
-            }
-            if(state is AddNoteSuccess){
-              Navigator.pop(context);
-            }
-          },
-          builder: (context, state) {
-            return ModalProgressHUD(
-                inAsyncCall: state is AddNoteLoading ? true : false ,
-                child: const AddNoteForm());
-          },
-        ),
+    return BlocProvider(
+      create: (context) => AddNoteCubit(),
+      child: BlocConsumer<AddNoteCubit, AddNoteState>(
+        listener: (context, state) {
+          if (state is AddNoteFailer) {
+            print('Faield ${state.errMessage}');
+          }
+          if (state is AddNoteSuccess) {
+            Navigator.pop(context);
+          }
+        },
+        builder: (context, state) {
+          return AbsorbPointer(
+            absorbing: state is AddNoteLoading ? true : false,
+
+        child:  Padding(
+          padding: EdgeInsets.only(left:  16  , right: 16 , bottom: MediaQuery.of(context).viewInsets.bottom) ,
+          child: const SingleChildScrollView(child: AddNoteForm(),),
+        ),  );
+
+        },
       ),
     );
   }
