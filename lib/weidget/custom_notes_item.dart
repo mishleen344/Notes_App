@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/cubits/notes_cubit/notes_cubit.dart';
 import 'package:notes_app/models/note_model.dart';
 import 'package:notes_app/view/edit_note_view.dart';
 
 class NotesItem extends StatelessWidget {
   const NotesItem({super.key, required this.noteModel});
-final NoteModel noteModel;
+  final NoteModel noteModel;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) {
-          return const EditNoteView();
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return EditNoteView(
+            note: noteModel,
+          );
         }));
       },
       child: Container(
@@ -26,7 +28,7 @@ final NoteModel noteModel;
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               ListTile(
-                title:  Text(
+                title: Text(
                   noteModel.title,
                   style: const TextStyle(
                     color: Colors.black,
@@ -42,7 +44,10 @@ final NoteModel noteModel;
                   ),
                 ),
                 trailing: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    noteModel.delete();
+                    BlocProvider.of<NotesCubit>(context).fetchAllNotes();
+                  },
                   icon: const Icon(Icons.delete),
                   color: Colors.black,
                   iconSize: 25,
